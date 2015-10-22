@@ -42,7 +42,9 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
-
+*.pyc
+data/*
+temp/*
 # Translations
 *.mo
 *.pot
