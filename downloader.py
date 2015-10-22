@@ -62,24 +62,25 @@ class Downloader:
         try:
             with open('temp/scriptlist.txt', 'w+') as fi:
                 print "Checking which scripts you already have..."
-                parser = HtmlParser(self.letters)
+                #Always check if we have every script
+                parser = HtmlParser("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
                 self.scriptlist = parser.getScriptLinks()
                 for line in fi:
                     if line in self.scriptlist:
                         print "Already have " + line + " don't need to download..."
                         links.remove(line)
-                print "Downloading scripts now..."
-                success = self.retreiveRawHtml(self.scriptlist)
-                if success:
-                    print "Successfully downloaded all new scripts"
-                else:
-                    print "Something went wrong with download, possibly network or sever related" \
-                    " try again later."
-                [fi.write(link + "\n") for link in self.scriptlist]
-                print "All scripts have been parsed, now creating training sets..."
-                pass
+            print "Downloading scripts now..."
+            success = self.retreiveRawHtml(self.scriptlist)
+            if success:
+                print "Successfully downloaded all new scripts"
+            else:
+                print "Something went wrong with download, possibly network or sever related" \
+                " try again later."
+                return 0
+            print "All scripts have been parsed, now creating training sets..."
+            pass
         except IOError as e:
-            print "Unable to open file temp file scriptlist.txt" + str(e)
+            print "Unable to open file temp file scriptlist.txt"
 
     '''
     Takes a list of urls to download the raw html of.
@@ -95,6 +96,12 @@ class Downloader:
                 try:
                     urllib.urlretrieve(imsdbUrl + url, "temp/" + url.replace('/', '').strip(".html") + ".txt")
                     print "Successfully downloaded " + imsdbUrl + url
+                    if "Movie Script" in url:
+                        try:
+                            with open('temp/scriptlist.txt', 'a') as fi:
+                                fi.write(url + "\n")
+                        except:
+                            pass
                     break
                 except KeyboardInterrupt:
                     print "Download stopped by user..."
