@@ -11,6 +11,9 @@ imsdbUrl = "http://www.imsdb.com/"
 alphabetical = "alphabetical/"
 script = "scripts/"
 endingExt = ".html"
+tempHtmlDirectory = "data/raw/temp/"
+tempScriptDirectory = "data/raw/scripts/"
+downloadedScriptList = "data/raw/scriptlist.txt"
 
 class Downloader:
     def __init__(self):
@@ -19,10 +22,12 @@ class Downloader:
 
     def setDownloadPath(self):
         root = ["data"]
-        root.append(root[0] + "/test")
-        root.append(root[0] + "/train")
-        root.append(root[0] + "/val")
-        root.append("temp")
+        root.append(root[0] + "/test/")
+        root.append(root[0] + "/train/")
+        root.append(root[0] + "/val/")
+        root.append(root[0] + "/raw/")
+        root.append(tempHtmlDirectory)
+        root.append(tempScriptDirectory)
         for path in root:
             if not os.path.exists(path):
                 print "Creating " + path + " folder..."
@@ -44,12 +49,12 @@ class Downloader:
     '''
     def checkDownload(self):
         #First check that alphabetical files lists raw html is downloaded
-        fileList = os.listdir("temp")
+        fileList = os.listdir(tempHtmlDirectory)
         secondsInDay = 86400
         nowDays = time.time() / secondsInDay
         for f in fileList:
             #if 7 or more days old redownload!
-            if ((nowDays - os.path.getmtime("temp/" + f)) / secondsInDay) < 7:
+            if ((nowDays - os.path.getmtime(tempHtmlDirectory + f)) / secondsInDay) < 7:
                 self.letters = self.letters.replace(f.strip('.txt').replace("alphabetical", ''), '')
         print "Need to download " + str(len(self.letters)) + " files"
 
@@ -60,17 +65,18 @@ class Downloader:
             " try again later."
             return 0
         try:
-            with open('temp/scriptlist.txt', 'w+') as fi:
+            with open(downloadedScriptList, 'r+') as fi:
                 print "Checking which scripts you already have..."
                 #Always check if we have every script
                 parser = HtmlParser("ABCDEFGHIJKLMNOPQRSTUVWXYZ")
-                self.scriptlist = parser.getScriptLinks()
+                self.scriptList = parser.getScriptLinks()
                 for line in fi:
-                    if line in self.scriptlist:
+                    line = line.strip('\n')
+                    if line in self.scriptList:
                         print "Already have " + line + " don't need to download..."
-                        links.remove(line)
+                        self.scriptList.remove(line)
             print "Downloading scripts now..."
-            success = self.retreiveRawHtml(self.scriptlist)
+            success = self.retreiveRawHtml(self.scriptList)
             if success:
                 print "Successfully downloaded all new scripts"
             else:
@@ -80,7 +86,7 @@ class Downloader:
             print "All scripts have been parsed, now creating training sets..."
             pass
         except IOError as e:
-            print "Unable to open file temp file scriptlist.txt"
+            print "Unable to open temp file scriptlist.txt"
 
     '''
     Takes a list of urls to download the raw html of.
@@ -94,11 +100,12 @@ class Downloader:
             quitTrying = False
             while timeoutCount < 5:
                 try:
-                    urllib.urlretrieve(imsdbUrl + url, "temp/" + url.replace('/', '').strip(".html") + ".txt")
+                    directory = ("Movie Script" in url and tempScriptDirectory) or tempHtmlDirectory
+                    urllib.urlretrieve(imsdbUrl + url, directory + url.replace('/', '').strip(".html") + ".txt")
                     print "Successfully downloaded " + imsdbUrl + url
                     if "Movie Script" in url:
                         try:
-                            with open('temp/scriptlist.txt', 'a') as fi:
+                            with open(downloadedScriptList, 'a') as fi:
                                 fi.write(url + "\n")
                         except:
                             pass

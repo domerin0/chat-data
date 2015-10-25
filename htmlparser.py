@@ -20,7 +20,7 @@ class HtmlParser:
     def scrapeForScriptLinks(self):
         alphaFileList = ["alphabetical" + char + ".txt" for char in self.letters]
         for alpha in alphaFileList:
-            with open("temp/" + alpha, 'r') as f:
+            with open("data/raw/temp/" + alpha, 'r') as f:
                 soup = BeautifulSoup(f.read())
                 print "Getting all script urls in " + alpha
                 for a in soup.findAll('a', href=True):
