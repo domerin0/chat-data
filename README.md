@@ -21,6 +21,6 @@ To run:
 
 It takes care of the rest.
 
-If you want to delete all the downloaded data and temporary files, run:
+If you want to delete all the downloaded raw data and temporary files (won't touch train/val/test directories), run:
 
 ```python main.py clean```
