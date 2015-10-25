@@ -11,7 +11,7 @@ This is not finished yet, so far it only downloads all the raw scripts, parsing 
 
 - Requires package BeautifulSoup
 
-```bash sudo pip install BeautifulSoup```
+```sudo pip install BeautifulSoup```
 
 ##Usage:
 
