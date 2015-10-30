@@ -65,6 +65,8 @@ class Downloader:
             " try again later."
             return 0
         try:
+            with open(downloadedScriptList, 'w+') as fi:
+                print "creating text file..."
             with open(downloadedScriptList, 'r+') as fi:
                 print "Checking which scripts you already have..."
                 #Always check if we have every script
@@ -86,24 +88,25 @@ class Downloader:
             print "All scripts have been parsed, now creating training sets..."
             pass
         except IOError as e:
-            print "Unable to open temp file scriptlist.txt"
+            print "Unable to open temp file scriptlist.txt" + str(e)
 
     '''
     Takes a list of urls to download the raw html of.
     returns 0 or 1 indicating sucessful download or not
     '''
     def retreiveRawHtml(self, urls):
-        socket.setdefaulttimeout(5)
+        socket.setdefaulttimeout(30)
         print (len(urls) and 1)*"Downloading raw html to parse!"
         for url in urls:
             timeoutCount = 0
             quitTrying = False
             while timeoutCount < 5:
                 try:
-                    directory = ("Movie Script" in url and tempScriptDirectory) or tempHtmlDirectory
+                    directory = ("scripts" in url and tempScriptDirectory) or tempHtmlDirectory
+                    url = url.replace(" ", "-")
                     urllib.urlretrieve(imsdbUrl + url, directory + url.replace('/', '').strip(".html") + ".txt")
                     print "Successfully downloaded " + imsdbUrl + url
-                    if "Movie Script" in url:
+                    if "scripts" in url:
                         try:
                             with open(downloadedScriptList, 'a') as fi:
                                 fi.write(url + "\n")

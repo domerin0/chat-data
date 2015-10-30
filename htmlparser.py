@@ -26,4 +26,7 @@ class HtmlParser:
                 for a in soup.findAll('a', href=True):
                     if "Movie Script" in a['href']:
                         #Remove first '/' for formatting reasons
-                        self.urlList.append(a['href'][1:])
+                        temp = a['href'][1:].replace("Movie Scripts", "scripts")
+                        temp = temp.replace(" Script", "")
+                        temp = temp.replace(":", "")
+                        self.urlList.append(temp)
