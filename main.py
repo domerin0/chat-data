@@ -16,10 +16,10 @@ def main():
                 return
     d = Downloader()
     d.download()
-    if(deleteSmallFiles()):
-        #TODO run preprocessor
-    else:
-        terminalContinue()
+    #if(deleteSmallFiles()):
+    #    #TODO run preprocessor
+    #else:
+    #    terminalContinue()
 
 def terminalContinue():
     x = raw_input("Some failed downloads couldn't be deleted. Run preprocessor anyways? (y/n)")

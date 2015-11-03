@@ -14,9 +14,9 @@ def deleteSmallFiles():
     fileList = os.listdir(tempHtmlDirectory)
     for f in fileList:
         if os.path.getsize(f) < 15000:
-        try:
-            os.remove(f)
-        except IOError:
-            print "Unable to delete " + f + " check to make sure it isn't open."
-            return False
+            try:
+                os.remove(f)
+            except IOError:
+                print "Unable to delete " + f + " check to make sure it isn't open."
+                return False
     return True

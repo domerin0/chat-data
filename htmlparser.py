@@ -29,4 +29,19 @@ class HtmlParser:
                         temp = a['href'][1:].replace("Movie Scripts", "scripts")
                         temp = temp.replace(" Script", "")
                         temp = temp.replace(":", "")
+
                         self.urlList.append(temp)
+    '''
+    This function takes in the script data and parses it into target/source pairs
+    '''
+    def scrapeForSourceTargetPairs(self, scriptDirectory, dataDirectory):
+        fileList = os.listdir(scriptDirectory)
+        for f in fileList:
+            with open(scriptDirectory + f, 'r') as doc:
+                tempSoup = BeautifulSoup(doc.read()).findAll('pre')[0]
+                soup = BeautifulSoup(tempSoup.getText())
+                for tag in soup.findAll(True):
+                    if tag == 'b':
+                        tag.replaceWith('\n')
+                with open(dataDirectory + f, 'w') as pre:
+                    pre.write(soup.getText().encode('ascii', 'ignore'))
